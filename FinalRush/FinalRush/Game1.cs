@@ -12,6 +12,11 @@ namespace FinalRush
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        Player player;
+
+        KeyboardState currentKeyboardState;
+        KeyboardState previousKeyboardState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -28,6 +33,12 @@ namespace FinalRush
         {
             // TODO: Add your initialization logic here
 
+            player = new Player();
+
+            this.graphics.PreferredBackBufferWidth = 1024;
+            this.graphics.PreferredBackBufferHeight = 600;
+            this.graphics.ApplyChanges();
+
             base.Initialize();
         }
 
@@ -41,6 +52,9 @@ namespace FinalRush
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+            Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
+            player.Initialize(Content.Load<Texture2D>("Graphics\\player"), playerPosition);
         }
 
         /// <summary>
@@ -64,7 +78,67 @@ namespace FinalRush
 
             // TODO: Add your update logic here
 
+            previousKeyboardState = currentKeyboardState;
+            currentKeyboardState = Keyboard.GetState();
+
+            UpdatePlayer(gameTime);
+
             base.Update(gameTime);
+        }
+
+        private void UpdatePlayer(GameTime gameTime)
+        {
+            if (currentKeyboardState.IsKeyDown(Keys.Left))
+            {
+                player.VelocityX -= 0.1f;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Right))
+            {
+                player.VelocityX += 0.1f;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Up))
+            {
+                player.VelocityY -= 0.1f;
+            }
+
+            if (currentKeyboardState.IsKeyDown(Keys.Down))
+            {
+                player.VelocityY += 0.1f;
+            }
+            player.Position.X += player.VelocityX;
+            player.Position.Y += player.VelocityY;
+            player.VelocityY = MathHelper.Clamp(player.VelocityY, -5, 5);
+            player.VelocityX = MathHelper.Clamp(player.VelocityX, -5, 5);
+
+            float outX = MathHelper.Clamp(player.Position.X, 0, GraphicsDevice.Viewport.Width - player.Width);
+            float outY = MathHelper.Clamp(player.Position.Y, 0, GraphicsDevice.Viewport.Height - player.Height);
+
+            if (outX == 0 || outX == GraphicsDevice.Viewport.Width - player.Width)
+            {
+                player.Position.X = outX;
+                player.VelocityX = 0;
+            }
+            if (outY == 0 || outY == GraphicsDevice.Viewport.Height - player.Height)
+            {
+                player.Position.Y = outY;
+                player.VelocityY = 0;
+            }
+            if (currentKeyboardState.IsKeyDown(Keys.Down | Keys.Up | Keys.Left | Keys.Right) == false)
+            {
+                if (player.VelocityX > 0)
+                    player.VelocityX -= 0.02f;
+                else if (player.VelocityX < 0)
+                    player.VelocityX += 0.02f;
+
+                if (player.VelocityY > 0)
+                    player.VelocityY -= 0.02f;
+                else if (player.VelocityY < 0)
+                {
+                    player.VelocityY += 0.02f;
+                }
+            }
         }
 
         /// <summary>
@@ -76,6 +150,10 @@ namespace FinalRush
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+
+            spriteBatch.Begin();
+            player.Draw(spriteBatch);
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
