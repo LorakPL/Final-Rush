@@ -13,6 +13,7 @@ namespace FinalRush
         SpriteBatch spriteBatch;
 
         Player player;
+        Texture2D Rectangle;
 
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
@@ -55,6 +56,9 @@ namespace FinalRush
 
             Vector2 playerPosition = new Vector2(GraphicsDevice.Viewport.TitleSafeArea.X, GraphicsDevice.Viewport.TitleSafeArea.Y + GraphicsDevice.Viewport.TitleSafeArea.Height / 2);
             player.Initialize(Content.Load<Texture2D>("Graphics\\player"), playerPosition);
+
+            Rectangle = new Texture2D(GraphicsDevice, 1, 1);
+            Rectangle.SetData(new[] { Color.White });
         }
 
         /// <summary>
@@ -113,14 +117,14 @@ namespace FinalRush
             player.VelocityX = MathHelper.Clamp(player.VelocityX, -5, 5);
 
             float outX = MathHelper.Clamp(player.Position.X, 0, GraphicsDevice.Viewport.Width - player.Width);
-            float outY = MathHelper.Clamp(player.Position.Y, 0, GraphicsDevice.Viewport.Height - player.Height);
+            float outY = MathHelper.Clamp(player.Position.Y, 30, GraphicsDevice.Viewport.Height - player.Height);
 
             if (outX == 0 || outX == GraphicsDevice.Viewport.Width - player.Width)
             {
                 player.Position.X = outX;
                 player.VelocityX = 0;
             }
-            if (outY == 0 || outY == GraphicsDevice.Viewport.Height - player.Height)
+            if (outY == 30 || outY == GraphicsDevice.Viewport.Height - player.Height)
             {
                 player.Position.Y = outY;
                 player.VelocityY = 0;
@@ -153,6 +157,9 @@ namespace FinalRush
 
             spriteBatch.Begin();
             player.Draw(spriteBatch);
+
+            spriteBatch.Draw(Rectangle, new Rectangle(1, 1, 380, 30), Color.Yellow);
+
             spriteBatch.End();
 
             base.Draw(gameTime);
