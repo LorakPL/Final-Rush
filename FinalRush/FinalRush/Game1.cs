@@ -13,6 +13,7 @@ namespace FinalRush
         SpriteBatch spriteBatch;
 
         Player player;
+        Board board;
         Texture2D Rectangle;
 
         KeyboardState currentKeyboardState;
@@ -35,9 +36,11 @@ namespace FinalRush
             // TODO: Add your initialization logic here
 
             player = new Player();
+            board = new Board();
 
-            this.graphics.PreferredBackBufferWidth = 1024;
+            this.graphics.PreferredBackBufferWidth = 1050;
             this.graphics.PreferredBackBufferHeight = 600;
+            this.Window.Position = new Point(190, 90);
             this.graphics.ApplyChanges();
 
             base.Initialize();
@@ -117,14 +120,14 @@ namespace FinalRush
             player.VelocityX = MathHelper.Clamp(player.VelocityX, -5, 5);
 
             float outX = MathHelper.Clamp(player.Position.X, 0, GraphicsDevice.Viewport.Width - player.Width);
-            float outY = MathHelper.Clamp(player.Position.Y, 30, GraphicsDevice.Viewport.Height - player.Height);
+            float outY = MathHelper.Clamp(player.Position.Y, 0, GraphicsDevice.Viewport.Height - player.Height);
 
             if (outX == 0 || outX == GraphicsDevice.Viewport.Width - player.Width)
             {
                 player.Position.X = outX;
                 player.VelocityX = 0;
             }
-            if (outY == 30 || outY == GraphicsDevice.Viewport.Height - player.Height)
+            if (outY == 0 || outY == GraphicsDevice.Viewport.Height - player.Height)
             {
                 player.Position.Y = outY;
                 player.VelocityY = 0;
@@ -156,9 +159,9 @@ namespace FinalRush
             // TODO: Add your drawing code here
 
             spriteBatch.Begin();
-            player.Draw(spriteBatch);
 
-            spriteBatch.Draw(Rectangle, new Rectangle(1, 1, 380, 30), Color.Yellow);
+            board.Draw(spriteBatch, Rectangle);
+            player.Draw(spriteBatch);
 
             spriteBatch.End();
 
