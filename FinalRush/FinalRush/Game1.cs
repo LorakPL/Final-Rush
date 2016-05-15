@@ -15,6 +15,8 @@ namespace FinalRush
         Player player;
         Board board;
         Texture2D Rectangle;
+        float timer = 0;
+        private SpriteFont font;
 
         KeyboardState currentKeyboardState;
         KeyboardState previousKeyboardState;
@@ -62,6 +64,8 @@ namespace FinalRush
 
             Rectangle = new Texture2D(GraphicsDevice, 1, 1);
             Rectangle.SetData(new[] { Color.White });
+
+            font = Content.Load<SpriteFont>("font");
         }
 
         /// <summary>
@@ -89,6 +93,8 @@ namespace FinalRush
             currentKeyboardState = Keyboard.GetState();
 
             UpdatePlayer(gameTime);
+
+            timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             base.Update(gameTime);
         }
@@ -162,6 +168,7 @@ namespace FinalRush
 
             board.Draw(spriteBatch, Rectangle);
             player.Draw(spriteBatch);
+            spriteBatch.DrawString(font, "Player1: " + timer.ToString("0.00"), new Vector2(5, 580), Color.Black);
 
             spriteBatch.End();
 
